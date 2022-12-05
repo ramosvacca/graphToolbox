@@ -4,8 +4,19 @@
 
 Open the config file and adjust the values.
 
-isNewDatabase should be set to true if you are creating a new database.
+### SD
+user: your username
+password: your password
+database: the database to work with
+isNewDatabase should be set to true if the above mentioned is a new database.
+port: the port to connect with your stardog server
 
-The list of ontologies should be in python list format. You can load as many ontologies as you need.
+### ONT
+list: python format list with the acronyms of the ontologies to download
+graphUriBase: the base URI (ex, urn:dev:, rdfal:develop:, stardog:context:urn:)
 
-Be careful not to corrupt existing databases as it will load the triples in existing databases.
+### BP
+apikey: your Bioportal API key
+
+
+Be careful not to corrupt an existing databases as it will load the triples without asking.

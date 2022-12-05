@@ -16,6 +16,7 @@ database = config['SD']['database']
 isNewDatabase = config['SD']['isNewDatabase']
 sdUser = config['SD']['user']
 sdPass = config['SD']['password']
+graphUriBase = config['ONT']['graphUriBase']
 conn_details = {
   'endpoint': 'http://localhost:'+sdLocalPort,
   'username': sdUser,
@@ -23,32 +24,87 @@ conn_details = {
 }
 print(apikey)
 
-def ontDownloadImport(ontologies=ontologies, conn_details=conn_details, apikey=apikey, database=database, isNewDatabase=isNewDatabase, sdPass=sdPass, sdUser=sdUser, sdLocalPort=sdLocalPort):
+def ontDownloadImport(ontologies=ontologies, conn_details=conn_details, apikey=apikey, database=database,
+                      isNewDatabase=isNewDatabase, graphUriBase=graphUriBase):
 
     with stardog.Admin(**conn_details) as admin:
 
         if isNewDatabase=='True':
-        	db = admin.new_database(database)
+            admin.new_database(database)
 
         for ontology in ontologies:
-            print('dowloading and saving '+ ontology)
+            print(ontology)
+            print('check existance of '+ ontology + '.[ owl | ttl ]')
+            fileName = cwd+'/ontologies/'+ontology
+            # Check if the file exists in RDF or TTL, if it doesn't download is triggered
 
-            filename = cwd+'/ontologies/'+ontology+'.owl'
-            ontologyURL = "https://data.bioontology.org/ontologies/"+ontology+"/download"
+            if not ((os.path.exists(fileName+'.owl')) or (os.path.exists(fileName+'.ttl'))):
+                print(fileName+' Ontology file does not exist, it will be downloaded.')
+                # form the ontology URL to request the download
+                ontologyURL = "https://data.bioontology.org/ontologies/"+ontology+"/download"
+                data = requests.get(ontologyURL, params = apikey)
+                # gets the first line of the ontology file
+                firstLine = data.text.partition('\n')[0]
 
-            data = requests.get(ontologyURL, params = apikey)
+                if firstLine=='<?xml version="1.0"?>':
+                    fileName += '.owl'
+                else:
+                    fileName += '.ttl'
 
-            file = open(filename, 'w+')
-            file.write(data.text)
+                file = open(fileName, 'w+')
+                file.write(data.text)
+
+            elif (os.path.exists(fileName + '.owl')):
+                fileName += '.owl'
+
+            elif (os.path.exists(fileName + '.ttl')):
+                fileName += '.ttl'
 
             with stardog.Connection(database, **conn_details) as conn:
-                conn.begin()
-                conn.add(stardog.content.File(filename))
-                conn.commit()
+                try:
+                    conn.begin()
+                    conn.add(stardog.content.File(fileName), graph_uri=graphUriBase+ontology)
+                    conn.commit()
+                    print('Ontology loaded from saved file: ' + fileName)
+                except:
+                    print('File was not loaded as RDF or TTL. Processing next Ontology')
+                    continue
+                    
+                query = """PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX obi: <http://purl.obolibrary.org/obo/OBI_>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+prefix scmt: <http://rdfal.com/#>
+prefix dc: <http://purl.org/dc/elements/1.1/> 
 
-            print('Ontology loaded from saved file: '+filename)
+
+SELECT DISTINCT ?strippedOntologyName ?strippedInfoType ?strippedData FROM <%s%s>
+WHERE {
+
+  ?ontology rdf:type owl:Ontology;
+            ?p ?data;
+            dc:title ?ontologyName .
+  ?p rdfs:label ?infoType .
+  
+  BIND (STR(?ontologyName)  AS ?strippedOntologyName)
+  BIND (STR(?infoType)  AS ?strippedInfoType)
+  BIND (STR(?data)  AS ?strippedData)
+}""" % (graphUriBase, ontology)
+                results = conn.select(query)
+                readmeFilePath = cwd + '/ontologies/' + ontology + 'Readme.txt'
+                readmeFile = open(readmeFilePath, 'a+')
+                readmeFile.write('/////// Information file for the ontology %s ///////\n\n' % ontology)
+
+                for result in results['results']['bindings']:
+
+                    readmeFile.write(result['strippedInfoType']['value']+': '+result['strippedData']['value']+'\n')
+                print('readme file made for the ontology '+ontology)
+
+
 
     print('process success on database '+database)
 
 
 ontDownloadImport()
+

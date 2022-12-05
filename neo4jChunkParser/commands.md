@@ -1,0 +1,2 @@
+# ckg docker
+- bash command: 
