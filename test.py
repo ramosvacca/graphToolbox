@@ -1,6 +1,9 @@
-import sys
+testlist = ['a', 'b']
 
-with open(sys.argv[1], "r") as drugs_toread:
+print(type(testlist))
 
-    for line in drugs_toread:
-        print(line.split(", "))
+if type(testlist) == list:
+  if len(testlist) == 3:
+    print('OH')
+  else:
+    raise TypeError("Length should be 3")

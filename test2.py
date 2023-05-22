@@ -1,312 +1,112 @@
-#!/usr/bin/env python3
+import pylightxl as xl
+from re import sub
 
-# Import relevant libraries to make HTTP requests and parse JSON response
-import requests
-import json
-import sys
+# Defines camel case function
+def camel_case(s):
+  s = sub(r"(_|-|^[0-9]|\.|\xa0)+", " ", s).title().replace(" ", "")
+  return ''.join([s[0].lower(), s[1:]])
+# defines pascal case function
+def pascal_case(s):
+  s = sub(r"(_|-|^[0-9]|\.|\xa0)+", " ", s).title().replace(" ", "")
+  return s
 
-fileNameDRUGS= sys.argv[2]
 
-def comi(inputText):
-    return '"'+str(inputText)+'"'
-base_triple = "{} <urn:demo:healthcare:{}> {} .\n"
+global baseUri, baseUriAbbreviation
+baseUri = "<https://sustainable-energy.com/"
+baseUriAbbreviation = "sf"
+classesDict = {}
+subClassesTriples = []
 
-healthcare_drugs = []
+# readxl returns a pylightxl database that holds all worksheets and its data
+db = xl.readxl(fn=r"C:\Users\Administrator\Downloads\sust-taxo.xlsx")
 
-with open(sys.argv[1], "r") as drugs_toread:
+# return all sheetnames
+print(db.ws(ws='Mitigation summary').address(address='A1'))
 
-    for line in drugs_toread:
-        healthcare_drugs += line.split(", ")
+# for row in db.ws(ws=db.ws_names[0]).rows:
+#     print(row)
 
-totalcount = len(healthcare_drugs)
-basePrefix = "<urn:demo:healthcare:{}>"
+class Rdfclass:
+    def __init__(self, value):
+        self.uri = self.makeUri(value)
+        self.label = f'{self.uri} rdfs:label {value} .'
 
-# Build query string to get general information about AR and genetic constraint and tractability assessments 
-query_string = """
-query drugLookUp ($chemblId: String!){
-  drug(chemblId: $chemblId) {
-    name
-    id
-    isApproved
-    hasBeenWithdrawn
-    blackBoxWarning
-    synonyms
-    tradeNames
-    description
-    linkedDiseases {
-      count
-      rows {
-        id
-        name
-      }
-    }
-   
-    mechanismsOfAction {
-      rows {
-        mechanismOfAction
-      actionType
-      }
-    }
-    
-    crossReferences {
-      source
-      reference
-    }
-    
-     adverseEvents{
-      count
-     rows{
-      name
-      count
-      meddraCode
-    }
-    }
-    
-    drugWarnings {
-      warningType
-      description
-      toxicityClass
-      meddraSocCode
-      year
-    }
-    indications {
-      rows {
-      	
-        maxPhaseForIndication
-        disease {
-          id
-          name
-          therapeuticAreas {
-            id
-            name
-          }
+    def makeUri(self, value):
+        return f'{baseUriAbbreviation}:{pascal_case(value)}'
+
+
+class Property:
+
+    def __init__(self, prop_type, name, domain, range, property_prefix="", uri_prefix="", dict=classesDict):
+        # Type definition
+        if prop_type == 1:
+            self.type = "owl:ObjectProperty"
+        elif prop_type == 2:
+            self.type = "owl:DatatypeProperty"
+        elif prop_type == 3:
+            self.type = "owl:AnnotationProperty"
+
+        # Label definition
+        if property_prefix == "":
+            self.label = name
+        else:
+            self.label = f'{property_prefix} {name}'
+
+        # Name definition
+        if uri_prefix == "":
+            self.name = f'{baseUriAbbreviation}:{camel_case(self.label)}'
+        else:
+            self.name = f'{uri_prefix}:{camel_case(self.label)}'
+
+        self.domain = domain
+        self.range = range
+
+
+
+# Classes definition and serialization
+# its input is a dictionary with the sheet names as keys and lists of cell addreses as values
+classes = {
+    'Mitigation summary': ["A2","B2","C1","C2","G2","H2","I2","J2","K2"],
+    'Mitigation full data': ["B2","C2","D2"],
+    'Adaptation summary': ["C1"]
         }
-        references {
-          ids
-          source
-        }
-      }
+
+for sheet_name, cell_addresses_list in classes.items():
+    for cell_address in cell_addresses_list:
+        currentClassValue = db.ws(ws=sheet_name).range(address=cell_address)[0][0]
+        classesDict[f'{camel_case(sheet_name)}_{cell_address}'] = Rdfclass(currentClassValue)
+        print(classesDict[f'{camel_case(sheet_name)}_{cell_address}'].uri)
+
+# for key, value in classesDict.items():
+#     print(value.uri)
+
+# SubClasses definition and serialization as a pair of [SubClass, Class]
+
+# subclasses = [["C2","C1"],["G2","C1"],["H2","C1"],["I2","C1"],["J2","C1"],["K2","C1"]]
+# for SubClass, Class in subclasses:
+#     subClassesTriples += [f'{classesDict[SubClass].uri} rdfs:subClassOf {classesDict[Class].uri}']
+
+# Properties processing
+# Object Property → should be a list of dictionaries:
+# Each dictionary describes one property and should provide the following arguments:
+# type → 1 - Object Property, 2 - Datatype Property, 3 - Annotation Property
+# name → the name of the property as a reference list [sheet name, cell reference]
+# domain → it should be a reference to a cell or list of references to a cell [sheet name, cell reference]
+# range → it should be a reference to a cell or list of references to a cell [sheet name, cell reference]
+# propertyPrefix → if the URI is to have a prefix, it should be specified, e.g. has, is, etc.
+# uriPrefix → the URI prefix to be used, default ontology baseURI
+
+objectProperties = [
+    { # Climate change mitigation (mitigation summary & adaptation summary)
+        'type': 1,
+        'name': ['Mitigation summary', 'C2'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['Mitigation summary', 'C2'],
+        'property_prefix': 'has'
     }
-    
-    knownDrugs (size: 10000){
-      count
-      cursor
-      rows {
-        phase
-        status
-        urls {
-          name
-          url
-        }
-        disease {
-          id
-          name
-        }
-        target {
-          id
-          approvedName
-          approvedSymbol
-        }
-      }
-    }
-  }
-}
-
-"""
-
-# Set variables object of arguments to be passed to endpoint
+    # {
+    #     'type':
+    # }
+]
 
 
-# Set base URL of GraphQL API endpoint
-base_query_url = "https://api.platform.opentargets.org/api/v4/graphql"
-
-file = open(fileNameDRUGS, 'w+')
-
-
-for drugN in range(len(healthcare_drugs)):
-    #subject = healthcare_drugs[drugN][0]
-    variables = {"chemblId": healthcare_drugs[drugN]}
-    # Perform POST request and check status code of response
-    r = requests.post(base_query_url, json={"query": query_string, "variables": variables})
-
-    
-    # Transform API response from JSON into Python dictionary and file.write in console
-    api_response = json.loads(r.text)['data']['drug']
-
-    subject = "<urn:demo:healthcare:Medication:{}>".format(api_response['name'].replace(",","").replace(" ","_"))
-    print(r.status_code, "Starting drug -> {}".format(subject))
-
-    chemblId = "<https://www.ebi.ac.uk/chembl/compound_report_card/"+api_response['id']+"/>"
-    #print(chemblId)
-    ## id and name
-    file.write(subject+" <urn:demo:healthcare:has_chemblId> "+ chemblId +" ; rdfs:label {} ; a <urn:demo:healthcare:Medication> .\n".format(comi(api_response['name'])) + chemblId + " a <urn:demo:healthcare:externalId> .\n" )
-
-    ## comment description
-    file.write("{} rdfs:comment {} .\n".format(subject,comi(api_response['description'])))
-    
-    ##synonyms
-    for synonym in api_response['synonyms']:
-        file.write(base_triple.format(subject,'has_synonym',comi(synonym)))
-    
-    ##tradenames
-    for tradename in api_response['tradeNames']:
-            file.write(base_triple.format(subject,'has_tradename',comi(tradename)))
-    
-    ##isapproved
-    file.write(base_triple.format(subject, 'is_approved', comi(api_response['isApproved'])))
-    
-    ##withdrawn
-    file.write(base_triple.format(subject, 'has_been_withdrawn', comi(api_response['hasBeenWithdrawn'])))
-    
-    ## blackbox warning
-    file.write(base_triple.format(subject, 'has_blackbox_warning', comi(api_response['blackBoxWarning'])))
-
-    ## linked diseases
-    try:
-        for row in api_response['linkedDiseases']['rows']:
-            mondoId = "<https://www.pgscatalog.org/trait/"+row['id']+"> "
-            file.write(base_triple.format(subject, 'has_linked_disease', mondoId+" .\n"+mondoId+" a <urn:demo:healthcare:diseaseId> ; rdfs:label "+comi(row['name'])))
-    except:
-        print('No linked diseases')
-    
-    ## mechanism of action
-    
-    for row in api_response['mechanismsOfAction']['rows']:
-        file.write(base_triple.format(subject, 'has_mechanism_of_action', comi(row['mechanismOfAction'])))
-
-    ##Adverse events
-    try:
-        adv_n = 1
-        for row in api_response['adverseEvents']['rows']:
-            #print(row)
-
-            rowiri = subject.replace(">", "/pharmacovigilance/" + str(adv_n) + ">")
-
-            file.write(base_triple.format(subject, 'has_adverse_event', rowiri))
-
-            file.write("{} a <urn:demo:healthcare:drugPharmacovigilance> ; rdfs:label {}.\n".format(rowiri, comi(row['name'])))
-
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_count"), row['count']))
-
-            file.write("{} {} <{}> .\n".format(rowiri, basePrefix.format("has_url"), "https://identifiers.org/meddra:{}".format(row['meddraCode'])))
-
-            file.write("<{}> a {} .\n".format("https://identifiers.org/meddra:{}".format(row['meddraCode']), basePrefix.format("externalId")))
-
-            adv_n +=1
-
-
-    except:
-        print('no adeverse events')
-
-
-    ## crossrefence
-    try:
-        for row in api_response['crossReferences']:
-            file.write("{} <http://www.geneontology.org/formats/oboInOwl#hasDbXref> '{}:{}' .\n".format(subject,row['source'],row['reference'][0]))
-    except:
-        print('NO cross references')
-
-    ## KNOWN DRUGS - CLINICAL PRECEDENCE
-    try:
-        clin_n = 1
-        #print("LONGITUD DE LA LISTA "+ str(len(api_response['knownDrugs']['rows'])))
-
-        for row in api_response['knownDrugs']['rows']:
-            #print(api_response['indications']['rows'][n])
-            rowiri = subject.replace(">","/knownDrug/"+str(clin_n)+">")
-
-            file.write("{} a <urn:demo:healthcare:knownDrug> .\n".format(rowiri))
-
-            file.write(base_triple.format(subject, "has_clinical_precedence", rowiri))
-
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_phase"),row['phase']))
-
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_status"), comi(row['status'])))
-
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("related_disease"),"<https://platform.opentargets.org/disease/{}>".format(row['disease']['id'])))
-
-            file.write("<https://platform.opentargets.org/disease/{}> rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(row['disease']['id'], comi(row['disease']['name'])))
-
-            target_uri = "<https://platform.opentargets.org/target/{}>".format(row['target']['id'])
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_target"),target_uri))
-
-
-            file.write("{} {} {}; rdfs:label {} .\n".format(target_uri, basePrefix.format("has_approved_symbol"),comi(row['target']['approvedSymbol']),comi(row['target']['approvedName'])))
-
-            try: ### Clinical Precedence - urls
-                for url in row['urls']:
-
-                    file.write("{} {} <{}> ; rdfs:label {} .\n".format(rowiri, basePrefix.format("has_source"),url['url'], comi(url['name'])))
-
-                    file.write("<{}> a {} .\n".format(url['url'], basePrefix.format("referenceId")))
-
-            #file.write(base_triple.format(subject, 'has_indication', comi(row['mechanismOfAction'])))
-            except:
-                pass
-
-            #file.write("{} a <urn:demo:healthcare:drugIndication> .\n".format(indicationiri))
-
-            clin_n += 1
-
-    except:
-        print('No known drugs')
-    
-
-
-
-    ## INDICATIONS
-    try:
-        ## indications
-        n = 1
-        #for n in range(len(api_response['indications']['rows'])):
-        for row in api_response['indications']['rows']:
-            #print(api_response['indications']['rows'][n])
-            indicationiri = subject.replace(">","/indication/"+str(n)+">")
-
-            file.write("{} a <urn:demo:healthcare:drugIndication> .\n".format(indicationiri))
-
-            file.write(base_triple.format(subject, "has_indication", indicationiri))
-
-            file.write("{} {} {} .\n".format(indicationiri, basePrefix.format("maxPhaseForIndication"), row['maxPhaseForIndication']))
-
-            file.write("{} {} {} .\n".format(indicationiri, basePrefix.format("related_disease"), "<https://platform.opentargets.org/disease/{}>".format(row['disease']['id'])))
-
-            file.write("<https://platform.opentargets.org/disease/{}> rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(row['disease']['id'],comi(row['disease']['name'] )))
-
-            try: ## indication - therapeutic areas
-                for thera in row['disease']['therapeuticAreas']:
-
-                    thera_id = "<https://platform.opentargets.org/disease/{}>".format(thera['id'])
-
-                    file.write("{} {} {} .\n".format(indicationiri, basePrefix.format("has_therapeuthic_area"),thera_id))
-
-                    file.write("{} rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(thera_id, comi(thera['name'])))
-
-            except:
-                pass
-
-            try: ### indication - references
-                for refer in row['references']:
-
-                    if refer['source']=="ClinicalTrials":
-                        source_url = "<https://www.clinicaltrials.gov/ct2/show/{}>"
-                    elif refer['source'] == "DailyMed":
-                        source_url = "<http://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid={}>"
-                    for id in refer['ids']:
-
-                        refer_id = source_url.format(id)
-
-                        file.write(base_triple.format(indicationiri,"has_source",refer_id))
-
-                        file.write("{} a <urn:demo:healthcare:referenceId> .\n".format(refer_id))
-
-            #file.write(base_triple.format(subject, 'has_indication', comi(row['mechanismOfAction'])))
-            except:
-                pass
-            n+=1
-    except:
-        pass
-
-    print("{} of {}".format(drugN+1, totalcount))
-
-print("EXECUTION COMPLETE")
