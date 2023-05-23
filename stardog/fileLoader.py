@@ -9,9 +9,15 @@ conn_details = {
   'password': 'admin'
 }
 
-with stardog.Connection('ckgComplete', **conn_details) as conn:
+conn_details_2 = {
+'endpoint': 'https://solutions-demo.stardog.cloud:5820',
+  'username': 'alexander.castro@stardog.com',
+  'password': 'alex'
+}
 
-    for i in range(51, 52):
+with stardog.Connection('CKG', **conn_details_2) as conn:
+
+    for i in range(1,1545):
         beginInt = (i - 1) * 10000
         endInt = i * 10000
         fileName = '/media/newbuntu/rdfal/ckg/unzipped[withdrugbank]/ckg' + str(beginInt) + 'to' + str(endInt) + '.rdf'
