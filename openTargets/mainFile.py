@@ -8,7 +8,7 @@ import sys
 fileNameDRUGS = sys.argv[2]
 
 
-def comi(inputText):
+def encomillar_texto(inputText):
     return '"' + str(inputText) + '"'
 
 
@@ -141,34 +141,34 @@ for drugN in range(len(healthcare_drugs)):
     ## id and name
     file.write(
         subject + " <urn:demo:healthcare:has_chemblId> " + chemblId + " ; rdfs:label {} ; a <urn:demo:healthcare:Medication> .\n".format(
-            comi(api_response['name'])) + chemblId + " a <urn:demo:healthcare:externalId> .\n")
+            encomillar_texto(api_response['name'])) + chemblId + " a <urn:demo:healthcare:externalId> .\n")
 
     ## comment description
-    file.write("{} rdfs:comment {} .\n".format(subject, comi(api_response['description'])))
+    file.write("{} rdfs:comment {} .\n".format(subject, encomillar_texto(api_response['description'])))
 
     ##synonyms
     for synonym in api_response['synonyms']:
-        file.write(base_triple.format(subject, 'has_synonym', comi(synonym)))
+        file.write(base_triple.format(subject, 'has_synonym', encomillar_texto(synonym)))
 
     ##tradenames
     for tradename in api_response['tradeNames']:
-        file.write(base_triple.format(subject, 'has_tradename', comi(tradename)))
+        file.write(base_triple.format(subject, 'has_tradename', encomillar_texto(tradename)))
 
     ##isapproved
-    file.write(base_triple.format(subject, 'is_approved', comi(api_response['isApproved'])))
+    file.write(base_triple.format(subject, 'is_approved', encomillar_texto(api_response['isApproved'])))
 
     ##withdrawn
-    file.write(base_triple.format(subject, 'has_been_withdrawn', comi(api_response['hasBeenWithdrawn'])))
+    file.write(base_triple.format(subject, 'has_been_withdrawn', encomillar_texto(api_response['hasBeenWithdrawn'])))
 
     ## blackbox warning
-    file.write(base_triple.format(subject, 'has_blackbox_warning', comi(api_response['blackBoxWarning'])))
+    file.write(base_triple.format(subject, 'has_blackbox_warning', encomillar_texto(api_response['blackBoxWarning'])))
 
     ## linked diseases
     try:
         for row in api_response['linkedDiseases']['rows']:
             mondoId = "<https://www.pgscatalog.org/trait/" + row['id'] + "> "
             file.write(base_triple.format(subject, 'has_linked_disease',
-                                          mondoId + " .\n" + mondoId + " a <urn:demo:healthcare:diseaseId> ; rdfs:label " + comi(
+                                          mondoId + " .\n" + mondoId + " a <urn:demo:healthcare:diseaseId> ; rdfs:label " + encomillar_texto(
                                               row['name'])))
     except:
         print('No linked diseases')
@@ -176,7 +176,7 @@ for drugN in range(len(healthcare_drugs)):
     ## mechanism of action
 
     for row in api_response['mechanismsOfAction']['rows']:
-        file.write(base_triple.format(subject, 'has_mechanism_of_action', comi(row['mechanismOfAction'])))
+        file.write(base_triple.format(subject, 'has_mechanism_of_action', encomillar_texto(row['mechanismOfAction'])))
 
     ##Adverse events
     try:
@@ -189,7 +189,7 @@ for drugN in range(len(healthcare_drugs)):
             file.write(base_triple.format(subject, 'has_adverse_event', rowiri))
 
             file.write(
-                "{} a <urn:demo:healthcare:drugPharmacovigilance> ; rdfs:label {}.\n".format(rowiri, comi(row['name'])))
+                "{} a <urn:demo:healthcare:drugPharmacovigilance> ; rdfs:label {}.\n".format(rowiri, encomillar_texto(row['name'])))
 
             file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_count"), row['count']))
 
@@ -229,7 +229,7 @@ for drugN in range(len(healthcare_drugs)):
 
             file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_phase"), row['phase']))
 
-            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_status"), comi(row['status'])))
+            file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_status"), encomillar_texto(row['status'])))
 
             file.write("{} {} {} .\n".format(rowiri, basePrefix.format("related_disease"),
                                              "<https://platform.opentargets.org/disease/{}>".format(
@@ -237,20 +237,20 @@ for drugN in range(len(healthcare_drugs)):
 
             file.write(
                 "<https://platform.opentargets.org/disease/{}> rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(
-                    row['disease']['id'], comi(row['disease']['name'])))
+                    row['disease']['id'], encomillar_texto(row['disease']['name'])))
 
             target_uri = "<https://platform.opentargets.org/target/{}>".format(row['target']['id'])
             file.write("{} {} {} .\n".format(rowiri, basePrefix.format("has_target"), target_uri))
 
             file.write("{} {} {}; rdfs:label {} .\n".format(target_uri, basePrefix.format("has_approved_symbol"),
-                                                            comi(row['target']['approvedSymbol']),
-                                                            comi(row['target']['approvedName'])))
+                                                            encomillar_texto(row['target']['approvedSymbol']),
+                                                            encomillar_texto(row['target']['approvedName'])))
 
             try:  ### Clinical Precedence - urls
                 for url in row['urls']:
                     file.write(
                         "{} {} <{}> ; rdfs:label {} .\n".format(rowiri, basePrefix.format("has_source"), url['url'],
-                                                                comi(url['name'])))
+                                                                encomillar_texto(url['name'])))
 
                     file.write("<{}> a {} .\n".format(url['url'], basePrefix.format("referenceId")))
 
@@ -287,7 +287,7 @@ for drugN in range(len(healthcare_drugs)):
 
             file.write(
                 "<https://platform.opentargets.org/disease/{}> rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(
-                    row['disease']['id'], comi(row['disease']['name'])))
+                    row['disease']['id'], encomillar_texto(row['disease']['name'])))
 
             try:  ## indication - therapeutic areas
                 for thera in row['disease']['therapeuticAreas']:
@@ -297,7 +297,7 @@ for drugN in range(len(healthcare_drugs)):
                         "{} {} {} .\n".format(indicationiri, basePrefix.format("has_therapeuthic_area"), thera_id))
 
                     file.write("{} rdfs:label {} ; a <urn:demo:healthcare:diseaseId> .\n".format(thera_id,
-                                                                                                 comi(thera['name'])))
+                                                                                                 encomillar_texto(thera['name'])))
 
             except:
                 pass

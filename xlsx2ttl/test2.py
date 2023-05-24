@@ -16,7 +16,7 @@ def get_cell_value(sheet_name, cell_address):
     return db.ws(ws=sheet_name).range(address=cell_address)[0][0]
 
 
-global baseUri, baseUriAbbreviation
+#global baseUri, baseUriAbbreviation
 baseUri = "<https://sustainable-energy.com/"
 baseUriAbbreviation = "sf"
 
@@ -120,7 +120,9 @@ classes = {
     'Adaptation summary': ["C1"],
     'Adaptation full data': ["E2","G1","H1"],
     'Adaptation screening criteria': ["B1","B4","B19"],
-    'Regulation': ["A1"]
+    'Regulation': ["A1"],
+    'BICS':["A1"],
+    'TRBC':["A1"]
         }
 
 subclasses = {
@@ -128,16 +130,42 @@ subclasses = {
     'Mitigation full data': [],
     'Adaptation summary': [],
     'Adaptation full data': [],
-    'Adaptation screening criteria': [["B1","B4"],["B1","B19"]],
+    'Adaptation screening criteria': [["B4","B1"],["B19","B1"]],
         }
+subclasses = [{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'C2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'G2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'H2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'I2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'J2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'K2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Adaptation screening criteria', 'subclass': 'B4', 'class_sheet_name': 'Adaptation screening criteria', 'class': 'B1'},
+{'subclass_sheet_name': 'Adaptation screening criteria', 'subclass': 'B19', 'class_sheet_name': 'Adaptation screening criteria', 'class': 'B1'}]
 
 object_properties = [
-# Activity hasClimateChangeMitigation
+# Activity environmentalContributions
 {
         'type': 1,
         'name': ['Mitigation summary', 'C1'],
         'domain': ['Mitigation summary', 'B2'],
         'range': ['Mitigation summary', 'C1'],
+        'property_prefix': 'has',
+        'uri_prefix': ''
+    },
+# Activity has bics mapping
+{
+        'type': 1,
+        'name': ['BICS', 'A1'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['BICS', 'A1'],
+        'property_prefix': 'has',
+        'uri_prefix': ''
+    },
+# Activity has trbc mapping
+{
+        'type': 1,
+        'name':['TRBC', 'A1'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['TRBC', 'A1'],
         'property_prefix': 'has',
         'uri_prefix': ''
     },
@@ -429,6 +457,105 @@ object_properties = [
         'uri_prefix': 'dc',
         'property_prefix':''
     },
+# Regulation and directive title
+{
+        'type': 3,
+        'name': 'title',
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': 'dc',
+        'property_prefix':''
+    },
+# Regulation and directive comissionWebsite
+{
+        'type': 2,
+        'name': ['Regulation', 'C3'],
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:anyURI',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# Regulation and directive link
+{
+        'type': 2,
+        'name': ['Regulation', 'E3'],
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:anyURI',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# BICS mapping has bics code
+{
+        'type': 2,
+        'name': ['BICS', 'A2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# BICS mapping has bics name
+{
+        'type': 2,
+        'name': ['BICS', 'C2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# level
+{
+        'type': 3,
+        'name': ['BICS', 'B2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has bics NACE class
+{
+        'type': 2,
+        'name': ['TRBC', 'C2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has bics NACE class
+{
+        'type': 2,
+        'name': ['TRBC', 'D2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC level
+{
+        'type': 2,
+        'name': ['TRBC', 'E2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC code
+{
+        'type': 2,
+        'name': ['TRBC', 'F2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC description
+{
+        'type': 2,
+        'name': ['TRBC', 'G2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
 ]
 
 
@@ -444,9 +571,8 @@ for this_sheet_name, cell_addresses_list in classes.items():
 
 # SubClasses definition and serialization as a pair of [SubClass, Class]
 
-for this_sheet_name, subclass_pair in subclasses.items():
-    for SubClass, Class in subclass_pair:
-        sub_classes_triples += [classes_dict[f'{camel_case(this_sheet_name)}_{SubClass}'].uri + ' rdfs:subClassOf ' + classes_dict[f'{camel_case(this_sheet_name)}_{Class}'].uri]
+for subclass_dict in subclasses:
+    sub_classes_triples += [classes_dict[f'{camel_case(subclass_dict["subclass_sheet_name"])}_{subclass_dict["subclass"]}'].uri + ' rdfs:subClassOf ' + classes_dict[f'{camel_case(subclass_dict["class_sheet_name"])}_{subclass_dict["class"]}'].uri]
 
 for subclass_relation in sub_classes_triples:
     print(subclass_relation+'.\n')
