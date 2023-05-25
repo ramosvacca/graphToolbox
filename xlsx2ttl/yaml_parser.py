@@ -30,6 +30,9 @@ def make_input_lists():
 
 # Call the function and print the results.
 classes, subclasses, properties = make_input_lists()
-print(classes)
-print(subclasses)
-print(properties)
+#print(classes)
+#print(subclasses)
+#print(properties)
+
+for i in properties:
+    print(i)

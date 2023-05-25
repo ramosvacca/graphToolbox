@@ -8,26 +8,17 @@ import yaml
 def camel_case(s):
   s = sub(r"(_|-|^[0-9]|\.|\xa0|:|\?)+", " ", s).title().replace(" ", "")
   return ''.join([s[0].lower(), s[1:]])
-
-
 # defines pascal case function
 def pascal_case(s):
   s = sub(r"(_|-|^[0-9]|\.|\xa0)+", " ", s).title().replace(" ", "")
   return s
-
-
 def clean_case(string):
     return sub(r"(^[0-9]\.?\s?|\.|:|\xa0)+", "", string)
-
-
 def get_cell_value(sheet_name, cell_address):
     return db.ws(ws=sheet_name).range(address=cell_address)[0][0]
 
-
 def get_cell_address_string(sheetName, cellAdress):
     return f'{camel_case(sheetName)}_{cellAdress}'
-
-
 def make_input_lists():
 
     """This function returns a list of classes, a list of subclasses, and a list of properties from a YAML file."""
@@ -55,18 +46,22 @@ def make_input_lists():
     return classes, subclasses, properties
 
 
-# CLASSES, SUBCLASSES AND PROPERTIES DICTIONARIES
 # Call the function and print the results.
 classes, subclasses, properties = make_input_lists()
 
 
-# global baseUri, baseUriAbbreviation
+#global baseUri, baseUriAbbreviation
 baseUri = "<https://sustainable-energy.com/"
 baseUriAbbreviation = "sf"
 
 # readxl returns a pylightxl database that holds all worksheets and its data
 db = xl.readxl(fn=r"C:\Users\Administrator\Downloads\sust-taxo.xlsx")
 
+# return all sheet names
+print(db.ws(ws='Mitigation summary').address(address='A1'))
+
+# for row in db.ws(ws=db.ws_names[0]).rows:
+#     print(row)
 
 class Rdfclass:
     def __init__(self, value):
@@ -78,7 +73,6 @@ class Rdfclass:
 
     def get_ttl(self):
         return f'{self.uri} rdf:type rdfs:Class ;\nrdfs:label "{self.label}" .\n'
-
 
 class Property:
 
@@ -146,6 +140,458 @@ class Property:
             # else returns the definition for annotation property
             else:
                 return ttl_relation
+
+# CLASSES, SUBCLASSES AND PROPERTIES DICTIONARIES
+
+classes = [{'sheet_name': 'Mitigation summary', 'cell': 'A1'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'A2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'B2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'C1'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'C2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'G2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'H2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'I2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'J2'},
+           {'sheet_name': 'Mitigation summary', 'cell': 'K2'},
+           {'sheet_name': 'Mitigation full data', 'cell': 'E2'},
+           {'sheet_name': 'Mitigation full data', 'cell': 'G1'},
+           {'sheet_name': 'Mitigation full data', 'cell': 'J1'},
+           {'sheet_name': 'Adaptation summary', 'cell': 'C1'},
+           {'sheet_name': 'Adaptation full data', 'cell': 'E2'},
+           {'sheet_name': 'Adaptation full data', 'cell': 'G1'},
+           {'sheet_name': 'Adaptation full data', 'cell': 'H1'},
+           {'sheet_name': 'Adaptation screening criteria', 'cell': 'B1'},
+           {'sheet_name': 'Adaptation screening criteria', 'cell': 'B4'},
+           {'sheet_name': 'Adaptation screening criteria', 'cell': 'B19'},
+           {'sheet_name': 'Regulation', 'cell': 'A1'},
+           {'sheet_name': 'BICS', 'cell': 'A1'},
+           {'sheet_name': 'TRBC', 'cell': 'A1'}]
+
+subclasses = [{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'C2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'G2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'H2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'I2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'J2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Mitigation summary', 'subclass': 'K2', 'class_sheet_name': 'Mitigation summary', 'class': 'C1'},
+{'subclass_sheet_name': 'Adaptation screening criteria', 'subclass': 'B4', 'class_sheet_name': 'Adaptation screening criteria', 'class': 'B1'},
+{'subclass_sheet_name': 'Adaptation screening criteria', 'subclass': 'B19', 'class_sheet_name': 'Adaptation screening criteria', 'class': 'B1'}]
+
+object_properties = [
+# Activity environmentalContributions
+{
+        'type': 1,
+        'name': ['Mitigation summary', 'C1'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['Mitigation summary', 'C1'],
+        'property_prefix': 'has',
+        'uri_prefix': ''
+    },
+# Activity has bics mapping
+{
+        'type': 1,
+        'name': ['BICS', 'A1'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['BICS', 'A1'],
+        'property_prefix': 'has',
+        'uri_prefix': ''
+    },
+# Activity has trbc mapping
+{
+        'type': 1,
+        'name':['TRBC', 'A1'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['TRBC', 'A1'],
+        'property_prefix': 'has',
+        'uri_prefix': ''
+    },
+#activity is part of NaceMacroSector
+{
+        'type': 3,
+        'name': 'is part of',
+        'domain': ['Mitigation summary', 'B2'],
+        'range': ['Mitigation summary', 'A2'],
+        'uri_prefix': 'dc',
+        'property_prefix': ''
+    },
+#ClimateChangeMitigation isEnabling Boolean
+{
+        'type': 2,
+        'name': ['Mitigation summary', 'E3'],
+        'domain': ['Mitigation summary', 'C2'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': 'is'
+    },
+#ClimateChangeMitigation basedOnOwnPerformance Boolean
+{
+        'type': 2,
+        'name': ['Mitigation summary', 'D3'],
+        'domain': ['Mitigation summary', 'C2'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': 'based on'
+    },
+#EnvironmentalContributions hasTypeOfContribution String
+{
+        'type': 2,
+        'name': ['Mitigation summary', 'C3'],
+        'domain': ['Mitigation summary', 'C1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+#ClimateChangeMitigation isTransitionActivity Boolean
+{
+        'type': 2,
+        'name': ['Mitigation summary', 'F3'],
+        'domain': ['Mitigation summary', 'C2'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': 'is'
+    },
+# Activity level2 string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'B2'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# Activity level3 string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'C2'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# Activity level4 string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'D2'],
+        'domain': ['Mitigation summary', 'B2'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# Activity description
+{
+        'type': 3,
+        'name': 'description',
+        'domain': ['Mitigation summary', 'B2'],
+        'range': 'xsd:string',
+        'uri_prefix': 'dc',
+        'property_prefix': ''
+    },
+# Mitigation Criteria hasPrinciple string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'G2'],
+        'domain': ['Mitigation full data', 'G1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# Mitigation Criteria hasMetric&Threshold string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'H2'],
+        'domain': ['Mitigation full data', 'G1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# Mitigation Criteria hasRationale string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'I2'],
+        'domain': ['Mitigation full data', 'G1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# Activity has DNSHassessment
+{
+        'type': 1,
+        'name': ['Mitigation full data', 'J1'],
+        'domain': ['Mitigation full data', 'E2'],
+        'range': ['Mitigation full data', 'J1'],
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# DNSH assessment Summary string
+{
+        'type': 3,
+        'name': ['Mitigation full data', 'J2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment Adaptation string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'K2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment Water string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'L2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'dnsh on'
+    },
+# DNSH assessment Water based on legislation boolean
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'M2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment WaterRelevantRegulation string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'N2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment Circular Economy string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'O2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'dnsh on'
+    },
+# DNSH assessment circular economy based on legislation boolean
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'P2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment circular economyRelevantRegulation string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'Q2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment pollution string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'R2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'dnsh on'
+    },
+# DNSH assessment pollution based on legislation boolean
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'S2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment pollutionRelevantRegulation string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'T2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment ecosystems string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'U2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'dnsh on'
+    },
+# DNSH assessment ecosystems based on legislation boolean
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'V2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:boolean',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# DNSH assessment ecosystemsRelevantRegulation string
+{
+        'type': 2,
+        'name': ['Mitigation full data', 'W2'],
+        'domain': ['Mitigation full data', 'J1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': ''
+    },
+# aCTIVITY has adaptation criteria
+{
+        'type': 1,
+        'name': ['Adaptation full data', 'G1'],
+        'domain': ['Adaptation full data', 'E2'],
+        'range': ['Adaptation full data', 'G1'],
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# Adaptation criteria has technical screening criteria string
+{
+        'type': 2,
+        'name': ['Adaptation full data', 'G2'],
+        'domain': ['Adaptation full data', 'G1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# DNSH has mitigation information
+{
+        'type': 2,
+        'name': ['Adaptation full data', 'I2'],
+        'domain': ['Adaptation full data', 'H1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix': 'has'
+    },
+# Adaotation screening criteria explanatio
+{
+        'type': 3,
+        'name': ['Adaptation screening criteria', 'B2'],
+        'domain': ['Adaptation screening criteria', 'B1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# adaptation dc:description
+{
+        'type': 3,
+        'name': 'description',
+        'domain': ['Adaptation screening criteria', 'B1'],
+        'range': 'xsd:string',
+        'uri_prefix': 'dc',
+        'property_prefix':''
+    },
+# Regulation and directive title
+{
+        'type': 3,
+        'name': 'title',
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': 'dc',
+        'property_prefix':''
+    },
+# Regulation and directive comissionWebsite
+{
+        'type': 2,
+        'name': ['Regulation', 'C3'],
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:anyURI',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# Regulation and directive link
+{
+        'type': 2,
+        'name': ['Regulation', 'E3'],
+        'domain': ['Regulation', 'A1'],
+        'range': 'xsd:anyURI',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# BICS mapping has bics code
+{
+        'type': 2,
+        'name': ['BICS', 'A2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# BICS mapping has bics name
+{
+        'type': 2,
+        'name': ['BICS', 'C2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# level
+{
+        'type': 3,
+        'name': ['BICS', 'B2'],
+        'domain': ['BICS', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has bics NACE class
+{
+        'type': 2,
+        'name': ['TRBC', 'C2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has bics NACE class
+{
+        'type': 2,
+        'name': ['TRBC', 'D2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC level
+{
+        'type': 2,
+        'name': ['TRBC', 'E2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC code
+{
+        'type': 2,
+        'name': ['TRBC', 'F2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+# TRBC mapping has TRBC description
+{
+        'type': 2,
+        'name': ['TRBC', 'G2'],
+        'domain': ['TRBC', 'A1'],
+        'range': 'xsd:string',
+        'uri_prefix': '',
+        'property_prefix':''
+    },
+]
 
 
 # RDF CLASSES ##
@@ -228,7 +674,7 @@ classes_output_dict = create_rdf_classes(classes)
 
 sub_classes_triples = create_rdf_subclasses(subclasses, classes_output_dict)
 
-properties_list = create_properties_list(properties)
+properties_list = create_properties_list(object_properties)
 
 # Print the RDF classes, subclasses and properties
 
