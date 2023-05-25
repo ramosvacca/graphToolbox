@@ -5,6 +5,8 @@ classes:
   - sheet_name: Mitigation summary
     cell: A1
   - sheet_name: Mitigation summary
+    cell: A2
+  - sheet_name: Mitigation summary
     cell: B2
   - sheet_name: Mitigation summary
     cell: C1
