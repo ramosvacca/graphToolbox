@@ -223,7 +223,7 @@ def main():
     db_filepath = sys.argv[1]
     yaml_filepath = sys.argv[2]
     # # Read the file and generate RDF triples.
-    # db = xl.readxl(fn=r"C:\Users\Administrator\Downloads\sust-taxo.xlsx")
+    # db = xl.readxl(fn=r"C:\Users\Administrator\Downloads\example.xlsx")
     db = xl.readxl(fn=db_filepath)
     # CLASSES, SUBCLASSES AND PROPERTIES DICTIONARIES
     # Call the function and print the results.
