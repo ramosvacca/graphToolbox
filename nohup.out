@@ -1,0 +1,152 @@
+CompilerOracle: exclude javax/swing/text/GlyphView.getBreakSpot
+[34m********************************************************************************[0;39m 
+[34m**                                  Protege                                   **[0;39m 
+[34m********************************************************************************[0;39m 
+[34m[0;39m 
+[34m----------------- Initialising and Starting the OSGi Framework -----------------[0;39m 
+[34mFrameworkFactory Class: org.apache.felix.framework.FrameworkFactory[0;39m 
+[34m[0;39m 
+[34mThe OSGi framework has been initialised[0;39m 
+[34m------------------------------- Starting Bundles -------------------------------[0;39m 
+[34mStarting bundle org.protege.common[0;39m 
+[34mStarting bundle org.eclipse.equinox.supplement[0;39m 
+[34mStarting bundle org.eclipse.equinox.common[0;39m 
+[34mStarting bundle org.eclipse.equinox.registry[0;39m 
+[34mStarting bundle org.protege.editor.core.application[0;39m 
+[34mStarting bundle org.eclipse.equinox.supplement[0;39m 
+[34mStarting bundle org.protege.editor.owl[0;39m 
+[34mStarting bundle jul.to.slf4j[0;39m 
+[34mStarting bundle com.google.guava[0;39m 
+[34mStarting bundle org.apache.commons.io[0;39m 
+[34mStarting bundle org.semanticweb.owl.owlapi[0;39m 
+[34mStarting bundle org.jsr-305[0;39m 
+[34mStarting bundle ch.qos.logback.classic[0;39m 
+[34mStarting bundle log4j.over.slf4j[0;39m 
+[34mStarting bundle org.eclipse.equinox.registry[0;39m 
+[34mStarting bundle org.eclipse.equinox.common[0;39m 
+[34mStarting bundle com.googlecode.javaewah.JavaEWAH[0;39m 
+[34mStarting bundle org.apache.servicemix.bundles.javax-inject[0;39m 
+[34mStarting bundle org.protege.common[0;39m 
+[34mStarting bundle org.eclipse.jgit[0;39m 
+[34mStarting bundle slf4j.api[0;39m 
+[34mStarting bundle org.apache.servicemix.bundles.aopalliance[0;39m 
+[34mStarting bundle ch.qos.logback.core[0;39m 
+[34mStarting bundle org.protege.editor.core.application[0;39m 
+[34mStarting bundle org.coode.browser[0;39m 
+[34mStarting bundle org.coode.owlviz[0;39m 
+[34mStarting bundle org.protege.ontograf[0;39m 
+[34mStarting bundle uk.ac.manchester.cs.owl.explanation[0;39m 
+[34mStarting bundle org.protege.owl.rdf[0;39m 
+[34mStarting bundle cellfie[0;39m 
+[34mStarting bundle org.protege.editor.owl.rdf[0;39m 
+[34mStarting bundle swrltab-plugin[0;39m 
+[34mStarting bundle org.semanticweb.hermit[0;39m 
+[34mStarting bundle code-generation[0;39m 
+[34mStarting bundle existentialquery[0;39m 
+[34mStarting bundle org.coode.dlquery[0;39m 
+[34mStarting bundle oaf-protege[0;39m 
+[34mThe OSGi framework has been started[0;39m 
+[34m[0;39m 
+[34m------------------------------------ Protege -----------------------------------[0;39m 
+[34mProtege Desktop[0;39m 
+[34mVersion 5.5.0, Build [0;39m 
+[34m[0;39m 
+[34m[0;39m 
+[34m----------------------------------- Platform -----------------------------------[0;39m 
+[34mJava: JVM 1.8.0_121-b13  Memory: 10252M[0;39m 
+[34mLanguage: en, Country: US[0;39m 
+[34mFramework: Apache Software Foundation (1.8) [0;39m 
+[34mOS: linux (5.15.0-56-generic)[0;39m 
+[34mProcessor: x86-64
+[0;39m 
+[34m[0;39m 
+[34m------------------------------------ Plugins -----------------------------------[0;39m 
+[34mPlugin: Browser View (OWLDoc) (3.0.3)[0;39m 
+[34mPlugin: OWLViz (5.0.3)[0;39m 
+[34mPlugin: OntoGraf (2.0.3)[0;39m 
+[34mPlugin: Explanation Workbench (3.0.0)[0;39m 
+[34mPlugin: OWLAPI RDF Library (3.0.0)[0;39m 
+[34mPlugin: Cellfie Protege 5.0+ Plugin (2.1.1)[0;39m 
+[34mPlugin: SPARQL Query Plugin (3.0.0)[0;39m 
+[34mPlugin: SWRLTab Protege 5.0+ Plugin (2.0.6)[0;39m 
+[34mPlugin: HermiT Reasoner (1.4.3.456)[0;39m 
+[34mPlugin: OWL Code Generation Plug-in (2.0.0)[0;39m 
+[34mPlugin: Existential Query (2.0.0)[0;39m 
+[34mPlugin: DL Query (4.0.1)[0;39m 
+[34mPlugin: OAF Protege Plugin (1.1.0)[0;39m 
+[34m[0;39m 
+### Excluding compile: javax.swing.text.GlyphView::getBreakSpot
+[34mCreating and setting up empty (default) editor kit[0;39m 
+[34mOWL API Version: 4.5.9.2019-02-01T07:24:44Z[0;39m 
+[34mCannot generate ontology catalog for ontology at http://www.semanticweb.org/dinforma/ontologies/2022/11/6/untitled-ontology-165. URI scheme is not "file"[0;39m 
+[34m------------------------------- Auto-update Check ------------------------------[0;39m 
+[34mAuto-update is disabled[0;39m 
+[34m[0;39m 
+[34mOWL API Version: 4.5.9.2019-02-01T07:24:44Z[0;39m 
+[34m------------------------------- Loading Ontology -------------------------------[0;39m 
+[34mLoading ontology from file:/media/newbuntu/rdfal/healthcareDemo/healthcare_opentargets_model.owl[0;39m 
+[34mFinished loading file:/media/newbuntu/rdfal/healthcareDemo/healthcare_opentargets_model.owl[0;39m 
+[34mLoading for ontology and imports closure successfully completed in 152 ms[0;39m 
+[34m[0;39m 
+[34m---------------------------- Disposing of Workspace ----------------------------[0;39m 
+[34mSaved tab state for 'Individuals by class' tab[0;39m 
+[34mSaved tab state for 'DL Query' tab[0;39m 
+[34mSaved tab state for 'Entities' tab[0;39m 
+[34mSaved tab state for 'Active ontology' tab[0;39m 
+[34mSaved workspace[0;39m 
+[34mDisposed of 'Individuals by class' tab[0;39m 
+[34mDisposed of 'DL Query' tab[0;39m 
+[34mDisposed of 'Entities' tab[0;39m 
+[34mDisposed of 'Active ontology' tab[0;39m 
+[34mDisposed of workspace[0;39m 
+[34m[0;39m 
+[34m------------------------ Saving Workspace and Ontologies -----------------------[0;39m 
+[34mWill save the urn:demo:healthcare ontology because it has been modified[0;39m 
+[34mSaving urn:demo:healthcare[0;39m 
+[34mSaving ontology to temp file: /tmp/temp-ontology7538878805280549010[0;39m 
+[34mCopying ontology from temp file (/tmp/temp-ontology7538878805280549010) to actual destination (/media/newbuntu/rdfal/healthcareDemo/healthcare_opentargets_model.owl)[0;39m 
+[34mRemoving temp file: /tmp/temp-ontology7538878805280549010[0;39m 
+[34mSaved ontology OntologyID(OntologyIRI(<urn:demo:healthcare>) VersionIRI(<null>)) to file:/media/newbuntu/rdfal/healthcareDemo/healthcare_opentargets_model.owl in RDF/XML Syntax format[0;39m 
+[34mSaved tab state for 'Active ontology' tab[0;39m 
+[34mSaved tab state for 'Entities' tab[0;39m 
+[34mSaved tab state for 'DL Query' tab[0;39m 
+[34mSaved tab state for 'Individuals by class' tab[0;39m 
+[34mSaved workspace[0;39m 
+[34m[0;39m 
+[34m------------------------ Saving Workspace and Ontologies -----------------------[0;39m 
+[34mSaved tab state for 'Active ontology' tab[0;39m 
+[34mSaved tab state for 'Entities' tab[0;39m 
+[34mSaved tab state for 'DL Query' tab[0;39m 
+[34mSaved tab state for 'Individuals by class' tab[0;39m 
+[34mSaved workspace[0;39m 
+[34m[0;39m 
+CompileCommand: exclude com/intellij/openapi/vfs/impl/FilePartNodeRoot.trieDescend bool exclude = true
+2022-12-06 23:47:36,081 [    696]   WARN - #c.i.u.s.SvgCacheManager - Icon cache will be recreated or previous version of data reused, (db=/home/dinforma/.cache/JetBrains/PyCharmCE2022.2/icons-v6.db)
+2022-12-06 23:47:36,950 [   1565]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Visual Studio" not found PluginDescriptor(name=IDEA CORE, id=com.intellij, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/lib, version=222.4167.33, package=com.intellij.feedback, isBundled=true)
+2022-12-06 23:47:36,954 [   1569]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Eclipse" not found PluginDescriptor(name=IDEA CORE, id=com.intellij, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/lib, version=222.4167.33, package=com.intellij.feedback, isBundled=true)
+2022-12-06 23:47:36,954 [   1569]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "NetBeans 6.5" not found PluginDescriptor(name=IDEA CORE, id=com.intellij, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/lib, version=222.4167.33, package=com.intellij.feedback, isBundled=true)
+2022-12-06 23:47:36,955 [   1570]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Visual Studio" not found PluginDescriptor(name=IDEA CORE, id=com.intellij, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/lib, version=222.4167.33, package=com.intellij.feedback, isBundled=true)
+2022-12-06 23:47:36,981 [   1596]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Eclipse" not found PluginDescriptor(name=GitHub, id=org.jetbrains.plugins.github, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/plugins/github, version=222.4167.33, package=org.jetbrains.plugins.github, isBundled=true)
+2022-12-06 23:47:36,984 [   1599]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Eclipse" not found PluginDescriptor(name=Space, id=com.jetbrains.space, moduleName=intellij.space.vcs, descriptorPath=intellij.space.vcs.xml, path=/opt/pycharm-community-2022.2.2/plugins/space, version=222.4167.33, package=com.intellij.space.vcs, isBundled=true)
+2022-12-06 23:47:36,986 [   1601]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "Eclipse" not found PluginDescriptor(name=Python Community Edition, id=PythonCore, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/plugins/python-ce, version=222.4167.33, package=null, isBundled=true)
+2022-12-06 23:47:36,986 [   1601]   WARN - #c.i.o.a.i.ActionManagerImpl - keymap "NetBeans 6.5" not found PluginDescriptor(name=Python Community Edition, id=PythonCore, descriptorPath=plugin.xml, path=/opt/pycharm-community-2022.2.2/plugins/python-ce, version=222.4167.33, package=null, isBundled=true)
+Info  | RdCoroutineScope          | 19:JobScheduler FJ pool 4/5 | RdCoroutineHost overridden 
+2022-12-06 23:47:38,340 [   2955]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2022-12-06 23:47:38,369 [   2984]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2022-12-06 23:47:38,379 [   2994]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2022-12-06 23:47:38,395 [   3010]   WARN - #c.i.e.t.TargetBasedSdks - SDK target configuration data is absent
+2022-12-06 23:47:42,404 [   7019]   WARN - #c.i.o.a.i.ActionUpdater - 494 ms to grab EDT for CWMTelephonyGroup#update@NavBarToolbar (com.jetbrains.rd.platform.codeWithMe.telephony.CWMTelephonyGroup)
+[34m---------------------------- Disposing of Workspace ----------------------------[0;39m 
+[34mSaved tab state for 'Active ontology' tab[0;39m 
+[34mSaved tab state for 'Entities' tab[0;39m 
+[34mSaved tab state for 'DL Query' tab[0;39m 
+[34mSaved tab state for 'Individuals by class' tab[0;39m 
+[34mSaved workspace[0;39m 
+[34mDisposed of 'Active ontology' tab[0;39m 
+[34mDisposed of 'Entities' tab[0;39m 
+[34mDisposed of 'DL Query' tab[0;39m 
+[34mDisposed of 'Individuals by class' tab[0;39m 
+[34mDisposed of workspace[0;39m 
+[34m[0;39m 
+[34m----------------------- Shutting down Protege -----------------------[0;39m 
+[34mCleaning up temporary directories[0;39m 
