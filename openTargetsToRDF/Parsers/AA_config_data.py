@@ -31,12 +31,12 @@ main_data =[
             # {'main_entity':'Target', 'data_path':'Data/Target/', 'name_to_save':'targets'},
             # {'main_entity':'HumanPhenotype', 'data_path':'Data/Human Phenotype Ontology/', 'name_to_save':'hpo'},
             # {'main_entity':'ClinicalSignsAndSymptoms', 'data_path':'Data/ClinicalSignsAndSymptoms/', 'name_to_save':'diseaseToPhenotype'},
-
+            # {'main_entity':'AssociationByOverallDirect', 'data_path':'Data/Target - Disease associations/', 'name_to_save':'associationByOverallDirect'},
             ]
 
 
 type_prefixes = {'Drug'      :   ('CHEMBL'),
-            'Disease'   :   ('EFO_', 'MONDO_', 'GO_', 'DOID_', ),
+            'Disease'   :   ('EFO_', 'MONDO_', 'GO_', 'DOID_', 'Orphanet_', 'OTAR_', 'HP_', ),
             'Target'    :   ('ENS')
             }
 

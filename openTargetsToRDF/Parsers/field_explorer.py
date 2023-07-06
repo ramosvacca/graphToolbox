@@ -14,6 +14,7 @@ def capital_first_char(word):
 # Read text File
 
 prefixes = AA_config_data.type_prefixes
+excluded_predicates = AA_config_data.predicate_exclude_types
 
 def read_text_file(file_path):
     with open(file_path, 'r') as f:
@@ -35,60 +36,72 @@ def read_text_file(file_path):
 
         return file_set
 
+def check_if_entity(key_to_verify, str_to_verify):
+    for entity_type in prefixes:
+        # Check if the string representation of t_object starts with the current prefix
+        if key_to_verify not in excluded_predicates and str(str_to_verify).startswith(prefixes[entity_type]):
+            # Format t_object by appending entity type and original t_object to base URI
+            # value = AA_config_data.base_uri.format(f'/{entity_type}/{value}')
+            return 'URI - ' + entity_type
+
+# Helper function to create and return a CSV output line
+def append_csv_output(level, parent_level_name, key, value, range_val, has_next_level):
+    """Creates a list with CSV data.
+
+    Parameters:
+    level (int): Current processing level.
+    parent_level_name (str): Name of the parent level.
+    key (str): Key from the input dictionary.
+    value (varies): Value corresponding to the key in the input dictionary.
+    range_val (str): Data type of the value.
+    has_next_level (bool): Flag to indicate if there's a next level in the dictionary.
+
+    Returns:
+    list: A list containing the CSV data.
+    """
+    return [level, parent_level_name, "", key, "", range_val, value, has_next_level]
+
+# Main function to convert a dictionary to a CSV format
 def dict_to_csv(input=None, level=1, level_name=None, has_next_level=False):
+    """Converts a nested dictionary to a CSV-like nested list structure.
+
+    Parameters:
+    input (dict, optional): Input dictionary to process.
+    level (int, optional): Current processing level.
+    level_name (str, optional): Name of the current level.
+    has_next_level (bool, optional): Flag to indicate if there's a next level in the dictionary.
+
+    Returns:
+    list: A nested list representing the CSV format of the input dictionary.
+    """
     parent_level_name = 'URI - ' + level_name
     csv_output = []
 
     for key, value in input.items():
-        #print(value)
-        if type(value) is dict and 'rows' in value:
+        # If value is a dictionary and 'rows' key is present, replace value with the value of 'rows'
+        if isinstance(value, dict) and 'rows' in value:
             value = value['rows']
 
-        if type(value) is dict:
-            has_next_level = True
-            csv_output.append([level, parent_level_name, "", key, "", 'URI - ' + capital_first_char(key), value, has_next_level])
-            # csv_output.append([level+1, 'URI - '+capital_first_char(key), 'URI', 'AUTO GENERATED','','','',''])
+        # If value is a dictionary, recursively process the nested dictionary
+        if isinstance(value, dict):
+            csv_output.append(append_csv_output(level, parent_level_name, key, value, 'URI - ' + capital_first_char(key), True))
             csv_output += dict_to_csv(input=value, level=level + 1, level_name=capital_first_char(key), has_next_level=False )
-        elif type(value) is list:
-            if len(value) > 0 and isinstance(value[0], dict):
-                has_next_level=True
-                csv_output.append([level, parent_level_name, '', key, '', 'URI - ' + capital_first_char(key), value, has_next_level])
-                # csv_output.append([level+1, 'URI - '+capital_first_char(key), 'URI', 'AUTO GENERATED', '', '', '', ''])
-                csv_output += dict_to_csv(input=value[0], level=level + 1, level_name=capital_first_char(key), has_next_level=False )
-            else:
 
-                range = 'list'
-                # Iterate over each entity type in the prefixes dictionary
-                for entity_type in prefixes:
-                    # Check if the string representation of t_object starts with the current prefix
-                    if str(value[0]).startswith(prefixes[entity_type]):
-                        # Format t_object by appending entity type and original t_object to base URI
-                        # value = AA_config_data.base_uri.format(f'/{entity_type}/{value}')
-                        range = 'URI - ' + entity_type
-                        # Exit loop as a matching prefix has been found
-                        break
+        # If value is a list and first element is a dictionary, recursively process the nested dictionary
+        elif isinstance(value, list) and value and isinstance(value[0], dict):
+            csv_output.append(append_csv_output(level, parent_level_name, key, value, 'URI - ' + capital_first_char(key), True))
+            csv_output += dict_to_csv(input=value[0], level=level + 1, level_name=capital_first_char(key), has_next_level=False)
 
-                csv_output.append([level, parent_level_name, "", key, "", range, value, False])
-
-                # csv_output.append([level, parent_level_name, '', key, '', 'list', value, False])
-        elif type(value) is int:
-            csv_output.append([level, parent_level_name, "", key, "", 'integer', value, False])
-        elif type(value) is float:
-            csv_output.append([level, parent_level_name, "", key, "", 'decimal', value, False])
+        # If value is a normal field (list, integer, decimal or string), append it to the csv_output list
         else:
-            range = 'string'
-            # Iterate over each entity type in the prefixes dictionary
-            for entity_type in prefixes:
-                # Check if the string representation of t_object starts with the current prefix
-                if not key == 'id' and str(value).startswith(prefixes[entity_type]):
-                    # Format t_object by appending entity type and original t_object to base URI
-                    # value = AA_config_data.base_uri.format(f'/{entity_type}/{value}')
-                    range = 'URI - ' + entity_type
-                    # Exit loop as a matching prefix has been found
-                    break
+            range_val = 'list' if isinstance(value, list) else 'integer' if isinstance(value, int) else 'decimal' if isinstance(value, float) else 'string'
+            check_range = check_if_entity(key, value[0] if isinstance(value, list) else value)
+            if check_range is not None:
+                range_val = check_range
+            csv_output.append(append_csv_output(level, parent_level_name, key, value, range_val, False))
 
-            csv_output.append([level, parent_level_name, "", key, "", range, value, False])
     return csv_output
+
 
 def get_output(type_of_output='csv', eval_path=None, level_name=None, csv_save_folder=None, save_name=None):
     final_dict = dict()

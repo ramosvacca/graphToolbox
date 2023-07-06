@@ -1,5 +1,6 @@
-base_uri = "<http://mdata.com/{}>"
+import os
 
+base_uri = "<http://mdata.com/{}>"
 
 # class_uri = "<http://mdata.com/{}>"
 def capital_first_char(word):
@@ -43,3 +44,27 @@ def rdf_encode(input_text):
         return input_text.replace('"', r'\"')
     else:
         return input_text
+
+def get_subfolder_paths(directory):
+    """
+    Function to get the paths of all subdirectories in a directory.
+
+    Args:
+    directory (str): The parent directory.
+
+    Returns:
+    dict/False: A dictionary mapping subdirectory names to their full paths. If there are no subdirectories, returns False.
+    """
+
+    # Initialize a dictionary to store the subdirectory names and paths
+    subfolder_paths = {}
+
+    # Iterate over all items in the directory
+    for name in os.listdir(directory):
+        full_path = os.path.join(directory, name)
+        # If the item is a subdirectory, add it to the dictionary
+        if os.path.isdir(full_path):
+            subfolder_paths[name] = full_path
+
+    # If there are no subdirectories, return False. Otherwise, return the dictionary
+    return False if not subfolder_paths else subfolder_paths
