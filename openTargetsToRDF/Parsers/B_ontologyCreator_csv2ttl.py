@@ -1,5 +1,6 @@
 import re
 import pandas as pd
+import AA_config_data
 
 # Function to split CamelCase words into separate words with spaces in between
 def split_camel_case(s):
@@ -14,20 +15,7 @@ df = pd.read_csv('/home/dinforma/Downloads/otDrugs.csv', keep_default_na=False, 
 
 # Initialize ontology in Turtle format
 # Prefixes are required for the correct interpretation of the ontology
-turtle = f"""
-@prefix {base_uri_prefix}: <http://mdata.com/> .
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
-@prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix oboInOwl: <http://www.geneontology.org/formats/oboInOwl#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-@prefix dcterms: <http://purl.org/dc/terms/> .
-@prefix BFO: <http://purl.obolibrary.org/obo/BFO_> .
-
-
-{base_uri_prefix}:isPartOf owl:equivalentProperty BFO:0000050 .
-"""
+turtle = AA_config_data.ttl_init
 
 # Dictionary to store found properties and their domain and range
 properties_dict = {}

@@ -1,14 +1,14 @@
 import re
-import pandas as pd
+# import pandas as pd
 import os
 import json
 import csv
-from rdflib import Literal
+# from rdflib import Literal
 
 main_dict = {}
 
 # Open the CSV file
-with open('/home/dinforma/Downloads/otDrugs.csv', 'r') as f:
+with open('/media/newbuntu/rdfal/NEW AGE/OpenTargets/csv_data/otDrug.csv', 'r') as f:
     # Create a CSV reader
     reader = csv.reader(f)
 
