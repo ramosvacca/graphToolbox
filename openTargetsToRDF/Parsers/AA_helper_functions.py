@@ -1,6 +1,7 @@
 import os
+import AA_config_data
 
-base_uri = "<http://mdata.com/{}>"
+base_uri = AA_config_data.base_uri
 
 # class_uri = "<http://mdata.com/{}>"
 def capital_first_char(word):

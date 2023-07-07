@@ -1,8 +1,17 @@
 import json
 from AA_helper_functions import *
-import field_explorer
+import B_field_explorer as field_explorer
 import AA_config_data
 
+"""
+rdf_write_path:             Where RDF files are to be saved
+main_dict:                  Main dictionary when executing the script
+data_dictionaries:          List containing the data dictionaries. One for each folder to process, explained in config data
+base_path:                  Base path where data was downloaded from OT
+prefixes                    Prefixes to recognize entity by type
+exclude_convert_to_entity:  Predicates that exclude predicate conversion to entity URI
+csv_write_folder_path:      Path to save CSV files
+"""
 rdf_write_path = AA_config_data.rdf_write_path
 main_dict = {}
 data_dictionaries = AA_config_data.main_data
@@ -13,7 +22,7 @@ csv_write_folder_path = AA_config_data.csv_write_path
 
 type_triple = "{} rdf:type {} ."
 base_triple = "{} <http://mdata.com/{}> {} ."
-base_uri = "<http://mdata.com{}>"
+base_uri = AA_config_data.base_uri
 # class_uri = "<http://mdata.com/{}>"
 empty_triple = "{} {} {} ."
 
@@ -226,7 +235,8 @@ def process_folder_data(list_of_dict, base_path):
 
         else:
             # Append the name to save to the folder path to evaluate
-            folder_path_to_evaluate = folder_path_to_evaluate + folder_data['name_to_save']
+            folder_path_to_evaluate = folder_path_to_evaluate# + folder_data['name_to_save']
+            print(folder_path_to_evaluate)
 
             # Evaluate the folder
             evaluate_folder(eval_path=folder_path_to_evaluate, level_name=folder_data['main_entity'],

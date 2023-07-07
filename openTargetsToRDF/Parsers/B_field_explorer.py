@@ -1,20 +1,13 @@
-
-# Import Module
 import os, json
 import AA_config_data
 
-#
-# false = False
-# Folder Path
+prefixes = AA_config_data.type_prefixes
+excluded_predicates = AA_config_data.predicate_exclude_types
 save_path = '/media/newbuntu/rdfal/NEW AGE/OpenTargets/Data/Drug/molecule'
 
 def capital_first_char(word):
     return word[0].upper() + word[1:]
 
-# Read text File
-
-prefixes = AA_config_data.type_prefixes
-excluded_predicates = AA_config_data.predicate_exclude_types
 
 def read_text_file(file_path):
     with open(file_path, 'r') as f:
@@ -94,6 +87,8 @@ def dict_to_csv(input=None, level=1, level_name=None, has_next_level=False):
 
         # If value is a normal field (list, integer, decimal or string), append it to the csv_output list
         else:
+            if isinstance(value, list) and not value:
+                continue
             range_val = 'list' if isinstance(value, list) else 'integer' if isinstance(value, int) else 'decimal' if isinstance(value, float) else 'string'
             check_range = check_if_entity(key, value[0] if isinstance(value, list) else value)
             if check_range is not None:
