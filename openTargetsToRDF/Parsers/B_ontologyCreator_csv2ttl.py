@@ -15,7 +15,7 @@ df = pd.read_csv('/home/dinforma/Downloads/otDrugs.csv', keep_default_na=False, 
 
 # Initialize ontology in Turtle format
 # Prefixes are required for the correct interpretation of the ontology
-turtle = AA_config_data.ttl_init
+turtle = AA_config_data.TTL_INIT
 
 # Dictionary to store found properties and their domain and range
 properties_dict = {}

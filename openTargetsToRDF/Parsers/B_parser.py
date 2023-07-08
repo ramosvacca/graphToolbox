@@ -1,7 +1,7 @@
 import json
 from AA_helper_functions import *
 import B_field_explorer as field_explorer
-import AA_config_data
+from AA_config_data import *
 
 """
 rdf_write_path:             Where RDF files are to be saved
@@ -12,17 +12,11 @@ prefixes                    Prefixes to recognize entity by type
 exclude_convert_to_entity:  Predicates that exclude predicate conversion to entity URI
 csv_write_folder_path:      Path to save CSV files
 """
-rdf_write_path = AA_config_data.rdf_write_path
+
 main_dict = {}
-data_dictionaries = AA_config_data.main_data
-base_path = AA_config_data.base_path
-prefixes = AA_config_data.type_prefixes
-exclude_convert_to_entity = AA_config_data.predicate_exclude_types
-csv_write_folder_path = AA_config_data.csv_write_path
 
 type_triple = "{} rdf:type {} ."
 base_triple = "{} <http://mdata.com/{}> {} ."
-base_uri = AA_config_data.base_uri
 # class_uri = "<http://mdata.com/{}>"
 empty_triple = "{} {} {} ."
 
@@ -45,11 +39,11 @@ def triple_to_ttl(t_subject, t_predicate, t_object, print_file):
     matched = False
 
     # Iterate over each entity type in the prefixes dictionary
-    for entity_type in prefixes:
+    for entity_type in TYPE_PREFIXES:
         # Check if the string representation of t_object starts with the current prefix
-        if t_predicate not in exclude_convert_to_entity and str(t_object).startswith(prefixes[entity_type]):
+        if t_predicate not in PREFIX_EXCLUDING_PREDICATES and str(t_object).startswith(TYPE_PREFIXES[entity_type]):
             # Format t_object by appending entity type and original t_object to base URI
-            t_object = base_uri.format(f'/{entity_type}/{t_object}')
+            t_object = BASE_URI.format(f'/{entity_type}/{t_object}')
             # Set flag to True indicating a match has been found
             matched = True
             # Exit loop as a matching prefix has been found
@@ -60,7 +54,7 @@ def triple_to_ttl(t_subject, t_predicate, t_object, print_file):
         t_object = comillas(t_object)
 
     # Format and print the RDF triple, writing it to print_file
-    print(empty_triple.format(t_subject, base_uri.format('/' + t_predicate), t_object), file=print_file)
+    print(empty_triple.format(t_subject, BASE_URI.format('/' + t_predicate), t_object), file=print_file)
 
 
 def process_row(current_row, properties_array, is_auto_id, auto_id_counter, row_base_uri, current_entity_full_name,
@@ -93,7 +87,7 @@ def process_row(current_row, properties_array, is_auto_id, auto_id_counter, row_
     # Format the URI for this instance of the entity and construct the type triple
     instance_uri = base_entity_uri.format('/' + row_id + '{}')
     row_type_triple = type_triple.format(instance_uri.format(''),
-                                         base_uri.format('/' + capital_first_char(base_entity_name)))
+                                         BASE_URI.format('/' + capital_first_char(base_entity_name)))
 
     # Write the type triple to the ttl file
     print(row_type_triple, file=ttl_file)
@@ -104,11 +98,11 @@ def process_row(current_row, properties_array, is_auto_id, auto_id_counter, row_
         if isinstance(current_row, dict) and 'rows' in current_row:
             # Process each value in 'rows' and write the triple to the ttl file
             for value in current_row['rows']:
-                triple_to_ttl(base_uri.format('/' + parent_entity), base_entity_name, value, print_file=ttl_file)
+                triple_to_ttl(BASE_URI.format('' + parent_entity), base_entity_name, value, print_file=ttl_file)
             return
         else:
             # Write the relation triple between the parent entity and this entity to the ttl file
-            print(empty_triple.format(base_uri.format('/' + parent_entity), base_uri.format('/' + base_entity_name),
+            print(empty_triple.format(BASE_URI.format('' + parent_entity), BASE_URI.format('/' + base_entity_name),
                                       instance_uri.format('')), file=ttl_file)
 
     # Iterate over each field in the current row
@@ -167,7 +161,7 @@ def evaluate_folder(eval_path=None, level_name=None, save_name=None, auto_id_n=0
     """
 
     # Obtain the properties array using field_explorer
-    properties_array = field_explorer.get_output(type_of_output='list', eval_path=eval_path, level_name=level_name, csv_save_folder=csv_write_folder_path, save_name=save_name)
+    properties_array = field_explorer.get_output(type_of_output='list', eval_path=eval_path, level_name=level_name, csv_save_folder=CSV_WRITE_PATH, save_name=save_name)
     print('Properties array -> OK')
 
     # Determine the base entity full name from the properties array
@@ -180,7 +174,7 @@ def evaluate_folder(eval_path=None, level_name=None, save_name=None, auto_id_n=0
     file_paths = [os.path.join(dirpath, file_name) for dirpath, _, files in os.walk(eval_path) for file_name in files if file_name.endswith(".json")]
 
     # Open the output ttl file
-    with open(f'{rdf_write_path}{folder_data["main_entity"]}_{save_name}.ttl', 'w') as output_file:
+    with open(f'{RDF_WRITE_PATH}{folder_data["main_entity"]}_{save_name}.ttl', 'w') as output_file:
         # Process each JSON file
         for file_path in file_paths:
             with open(file_path, 'r') as f:
@@ -188,14 +182,14 @@ def evaluate_folder(eval_path=None, level_name=None, save_name=None, auto_id_n=0
                 for row in lines:
                     row = json.loads(row)
                     # Process each row and write the result to the output file
-                    process_row(row, properties_array, base_auto_id, auto_id_n, base_uri, base_entity_full_name, output_file)
+                    process_row(row, properties_array, base_auto_id, auto_id_n, BASE_URI, base_entity_full_name, output_file)
                     auto_id_n += 1
 
     # Return the last auto generated id used
     return auto_id_n
 
 
-def process_folder_data(list_of_dict, base_path):
+def process_folder_data(list_of_dict):
     """
     Function to process data in the specified folders.
 
@@ -217,7 +211,7 @@ def process_folder_data(list_of_dict, base_path):
         auto_id_n = 0
 
         # Generate the path to the folder to be evaluated
-        folder_path_to_evaluate = base_path + folder_data['data_path']
+        folder_path_to_evaluate = DATA_BASE_PATH + folder_data['name_to_save']
 
         # Get subfolder paths
         subfolder_paths = get_subfolder_paths(folder_path_to_evaluate)
@@ -243,4 +237,4 @@ def process_folder_data(list_of_dict, base_path):
                             save_name=folder_data['name_to_save'], folder_data=folder_data)
 
 
-process_folder_data(data_dictionaries, base_path)
+process_folder_data(ENTITIES_DATA_DICTS_LIST)

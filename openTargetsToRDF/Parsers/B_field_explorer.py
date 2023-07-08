@@ -1,9 +1,7 @@
 import os, json
-import AA_config_data
+from AA_config_data import *
 
-prefixes = AA_config_data.type_prefixes
-excluded_predicates = AA_config_data.predicate_exclude_types
-save_path = '/media/newbuntu/rdfal/NEW AGE/OpenTargets/Data/Drug/molecule'
+
 
 def capital_first_char(word):
     return word[0].upper() + word[1:]
@@ -29,13 +27,15 @@ def read_text_file(file_path):
 
         return file_set
 
+
 def check_if_entity(key_to_verify, str_to_verify):
-    for entity_type in prefixes:
+    for entity_type in TYPE_PREFIXES:
         # Check if the string representation of t_object starts with the current prefix
-        if key_to_verify not in excluded_predicates and str(str_to_verify).startswith(prefixes[entity_type]):
+        if key_to_verify not in PREFIX_EXCLUDING_PREDICATES and str(str_to_verify).startswith(TYPE_PREFIXES[entity_type]):
             # Format t_object by appending entity type and original t_object to base URI
             # value = AA_config_data.base_uri.format(f'/{entity_type}/{value}')
             return 'URI - ' + entity_type
+
 
 # Helper function to create and return a CSV output line
 def append_csv_output(level, parent_level_name, key, value, range_val, has_next_level):
@@ -53,6 +53,7 @@ def append_csv_output(level, parent_level_name, key, value, range_val, has_next_
     list: A list containing the CSV data.
     """
     return [level, parent_level_name, "", key, "", range_val, value, has_next_level]
+
 
 # Main function to convert a dictionary to a CSV format
 def dict_to_csv(input=None, level=1, level_name=None, has_next_level=False):
